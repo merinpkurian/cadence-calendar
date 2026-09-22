@@ -17,9 +17,6 @@ export const TimeColumn: React.FC<TimeColumnProps> = ({ hourHeight = 60 }) => {
 
   return (
     <div className="time-column" aria-hidden="true">
-      {/* Empty space matching the day header height */}
-      <div className="time-column__header-spacer" />
-
       <div className="time-column__labels">
         {hours.map((label, idx) => (
           <div

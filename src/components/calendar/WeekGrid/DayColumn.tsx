@@ -29,20 +29,15 @@ export const DayColumn: React.FC<DayColumnProps> = ({
   const positionedEvents = layoutEventsForDay(events, hourHeight);
   const totalHours = CALENDAR_END_HOUR - CALENDAR_START_HOUR;
   const hoursList = Array.from({ length: totalHours }, (_, i) => CALENDAR_START_HOUR + i);
+  const isWeekend = day.dayName === 'SAT' || day.dayName === 'SUN';
+  const isFirstDay = day.dayName === 'MON';
+  const isLastDay = day.dayName === 'SUN';
 
   return (
     <div
-      className={`day-col ${day.isToday ? 'day-col--today' : ''}`}
+      className={`day-col ${day.isToday ? 'day-col--today' : ''} ${isWeekend ? 'day-col--weekend' : ''} ${isFirstDay ? 'day-col--first' : ''} ${isLastDay ? 'day-col--last' : ''}`}
       data-date-key={day.dateKey}
     >
-      {/* Day Column Header */}
-      <div className="day-col__header">
-        <span className="day-col__name">{day.dayName}</span>
-        <div className={`day-col__number-badge ${day.isToday ? 'day-col__number-badge--today' : ''}`}>
-          <span>{day.dayNumber}</span>
-        </div>
-      </div>
-
       {/* Day Column Grid Area */}
       <div
         className="day-col__grid"

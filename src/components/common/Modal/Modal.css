@@ -41,7 +41,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 20px 24px 12px;
+  padding: 16px 20px 8px;
 }
 
 .modal-header__meta {
@@ -62,8 +62,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: var(--radius-md);
   color: var(--color-ink-muted);
   transition: all 0.15s ease;
@@ -76,9 +76,15 @@
 }
 
 .modal-body {
-  padding: 8px 24px 20px;
+  padding: 4px 20px 16px;
   overflow-y: auto;
-  max-height: calc(85vh - 140px);
+  max-height: calc(90vh - 40px);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.modal-body::-webkit-scrollbar {
+  display: none;
 }
 
 .modal-footer {

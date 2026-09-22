@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Calendar as CalendarIcon,
   MapPin,
   Users,
   Edit2,
   Trash2,
-  X,
   AlertCircle,
 } from 'lucide-react';
 import type { CalendarEvent } from '../../../types/event';
 import { formatPillDate, formatTimeRange } from '../../../utils/date';
+import { useAuth } from '../../../hooks/useAuth';
 import './EventDetailsPopover.css';
 
 interface EventDetailsPopoverProps {
@@ -27,10 +27,32 @@ export const EventDetailsPopover: React.FC<EventDetailsPopoverProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const { user } = useAuth();
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Close on Escape key press
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen || !event) return null;
+
+  const userInitials = user?.name
+    ? user.name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
+    : 'JA';
 
   const startDate = new Date(event.startsAt);
   const dateFormatted = formatPillDate(startDate);
@@ -91,14 +113,6 @@ export const EventDetailsPopover: React.FC<EventDetailsPopoverProps> = ({
               >
                 <Trash2 size={15} />
               </button>
-              <button
-                type="button"
-                className="event-details-action-btn"
-                onClick={onClose}
-                aria-label="Close details"
-              >
-                <X size={16} />
-              </button>
             </div>
           </div>
 
@@ -118,39 +132,35 @@ export const EventDetailsPopover: React.FC<EventDetailsPopoverProps> = ({
             </div>
 
             {/* Location */}
-            {event.location && (
-              <div className="event-details-row">
-                <MapPin size={16} className="event-details-icon" />
-                <span>{event.location}</span>
-              </div>
-            )}
+            <div className="event-details-row">
+              <MapPin size={16} className="event-details-icon" />
+              <span>{event.location || 'Google Meet · link in invite'}</span>
+            </div>
 
-            {/* Guests (visual fallback) */}
+            {/* Guests */}
             <div className="event-details-row">
               <Users size={16} className="event-details-icon" />
               <div className="event-details-guests">
-                <span className="event-details-avatar">JA</span>
+                <span className="event-details-avatar">{userInitials}</span>
                 <span className="event-details-avatar event-details-avatar--orange">VK</span>
                 <span className="event-details-guest-label">You and Vendor lead</span>
               </div>
             </div>
           </div>
 
-          {/* Description */}
-          {event.description && (
-            <>
-              <div className="event-details-divider" />
-              <p className="event-details-description">{event.description}</p>
-            </>
-          )}
+          {/* Divider */}
+          <div className="event-details-divider" />
+
+          {/* Description (only shown if present in actual event data) */}
+          {event.description && event.description.trim() ? (
+            <p className="event-details-description">{event.description.trim()}</p>
+          ) : null}
 
           {/* Visual Join Call Button */}
           <button
             type="button"
             className="event-details-join-btn"
-            onClick={() => {
-              /* Out of scope: visual only */
-            }}
+            onClick={onClose}
           >
             Join call
           </button>

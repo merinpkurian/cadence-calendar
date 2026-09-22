@@ -3,31 +3,11 @@
   min-width: 120px;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--color-border-light);
-  background-color: var(--color-surface);
   box-sizing: border-box;
+  background-color: transparent;
 }
 
-.day-col:last-child {
-  border-right: none;
-}
-
-/* Header */
-.day-col__header {
-  height: 58px;
-  border-bottom: 1px solid var(--color-border);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  background-color: var(--color-surface);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  user-select: none;
-}
-
+/* Day name & date badges used in week-header */
 .day-col__name {
   font-size: 11px;
   font-weight: 600;
@@ -55,17 +35,70 @@
   box-shadow: 0 1px 3px rgba(51, 102, 255, 0.4);
 }
 
-/* Grid Area */
+.day-col__number-badge--weekend {
+  color: var(--color-ink-muted);
+}
+
+/* Grid Area - The actual calendar grid starting at Monday */
 .day-col__grid {
   position: relative;
   width: 100%;
+  box-sizing: border-box;
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border-light);
 }
 
+/* Grid Column Tints (matches Figma #FAFBFF for today and #FCFCFC for weekends) */
+.day-col--today .day-col__grid {
+  background-color: #FAFBFF;
+}
+
+.day-col--weekend .day-col__grid {
+  background-color: #FCFCFC;
+}
+
+/* First Column (Monday): outer left border and rounded left corners starting at 8 AM */
+.day-col--first .day-col__grid {
+  border-left: 1px solid var(--color-border);
+  border-top-left-radius: var(--radius-lg);
+  border-bottom-left-radius: var(--radius-lg);
+}
+
+.day-col--first .day-col__slot:first-child {
+  border-top-left-radius: calc(var(--radius-lg) - 1px);
+}
+
+.day-col--first .day-col__slot:last-child {
+  border-bottom-left-radius: calc(var(--radius-lg) - 1px);
+}
+
+/* Last Column (Sunday): outer right border and rounded right corners */
+.day-col--last .day-col__grid {
+  border-right: 1px solid var(--color-border);
+  border-top-right-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+}
+
+.day-col--last .day-col__slot:first-child {
+  border-top-right-radius: calc(var(--radius-lg) - 1px);
+}
+
+.day-col--last .day-col__slot:last-child {
+  border-bottom-right-radius: calc(var(--radius-lg) - 1px);
+}
+
+/* Horizontal Hour Slot Lines */
 .day-col__slot {
   box-sizing: border-box;
   border-bottom: 1px solid var(--color-border-light);
   cursor: pointer;
   transition: background-color 0.12s ease;
+}
+
+.day-col__slot:last-child {
+  border-bottom: none;
 }
 
 .day-col__slot:hover {

@@ -325,7 +325,7 @@ export const EventModal: React.FC<EventModalProps> = ({
               placeholder="Add description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              rows={3}
+              rows={2}
               aria-label="Event description"
             />
           </div>
@@ -357,8 +357,8 @@ export const EventModal: React.FC<EventModalProps> = ({
             <Button
               type="button"
               variant="danger-outline"
-              size="md"
-              leftIcon={<Trash2 size={15} />}
+              size="sm"
+              leftIcon={<Trash2 size={14} />}
               isLoading={isDeleting}
               onClick={handleDelete}
             >
@@ -370,7 +370,7 @@ export const EventModal: React.FC<EventModalProps> = ({
             <Button
               type="button"
               variant="secondary"
-              size="md"
+              size="sm"
               onClick={onClose}
               disabled={isLoading || isDeleting}
             >
@@ -379,7 +379,7 @@ export const EventModal: React.FC<EventModalProps> = ({
             <Button
               type="submit"
               variant="primary"
-              size="md"
+              size="sm"
               isLoading={isLoading}
               disabled={isDeleting}
             >

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import type { CalendarWeek } from '../../../types/calendar';
 import type { CalendarEvent } from '../../../types/event';
@@ -31,6 +31,8 @@ export const WeekGrid: React.FC<WeekGridProps> = ({
   onReschedule,
   onResize,
 }) => {
+  const headerDaysRef = useRef<HTMLDivElement>(null);
+
   // Group events by local YYYY-MM-DD
   const eventsByDayKey = useMemo(() => {
     const map = new Map<string, CalendarEvent[]>();
@@ -48,6 +50,12 @@ export const WeekGrid: React.FC<WeekGridProps> = ({
     }
     return map;
   }, [events]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    if (headerDaysRef.current) {
+      headerDaysRef.current.scrollLeft = e.currentTarget.scrollLeft;
+    }
+  };
 
   return (
     <div className="week-grid-container">
@@ -72,7 +80,40 @@ export const WeekGrid: React.FC<WeekGridProps> = ({
         </div>
       )}
 
-      <div className="week-grid-scroll">
+      {/* Week Header - Sits outside and above the scroll container */}
+      <div className="week-header">
+        <div className="week-header__time-spacer" />
+        <div className="week-header__days" ref={headerDaysRef}>
+          {week.days.map((day) => {
+            const isWeekend = day.dayName === 'SAT' || day.dayName === 'SUN';
+            return (
+              <div
+                key={day.dateKey}
+                className={`week-header__cell ${day.isToday ? 'week-header__cell--today' : ''} ${
+                  isWeekend ? 'week-header__cell--weekend' : ''
+                }`}
+              >
+                <span className="day-col__name">{day.dayName}</span>
+                <div
+                  className={`day-col__number-badge ${
+                    day.isToday
+                      ? 'day-col__number-badge--today'
+                      : isWeekend
+                      ? 'day-col__number-badge--weekend'
+                      : ''
+                  }`}
+                >
+                  <span>{day.dayNumber}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="week-header__scroll-spacer" />
+      </div>
+
+      {/* Scrollable Grid - Scrollbar starts strictly below the header section */}
+      <div className="week-grid-scroll" onScroll={handleScroll}>
         <div className="week-grid" data-calendar-grid="true">
           {/* Left Time Labels Column */}
           <TimeColumn hourHeight={hourHeight} />
