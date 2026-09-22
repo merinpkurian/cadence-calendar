@@ -16,6 +16,39 @@ Cadence is a modern, lightweight team calendar web application built for the fro
 
 ---
 
+## ⚡ Flaky PATCH /events/:id Handling
+
+The backend's `PATCH /events/:id` endpoint is intentionally designed as a chaos endpoint:
+- **Injected Latency**: Responses are delayed by 300–900 ms.
+- **Injected Failure Rate**: Approximately 8% of requests return a 500 server error.
+
+To deliver a responsive user experience despite backend unreliability:
+1. **Optimistic Updates**: The UI updates immediately (0 ms delay) as soon as an event is dragged or resized, preserving a smooth interaction without waiting for network roundtrips.
+2. **Per-Event Mutation Tracking**: Each event mutation increments an internal version ID (`mutationVersions.current[eventId]`). Each in-flight PATCH request captures its specific mutation version.
+3. **Stale Response Protection**: When a response arrives, it is only applied if its captured version matches the latest mutation version for that event. If an earlier request finishes after a newer one (e.g., rapid moves 10:00 → 11:00 → 12:00), the older response is discarded and cannot overwrite the latest user state.
+4. **Resilient Rollback**: If a PATCH fails, the error handler checks whether the failure corresponds to the latest mutation. If it is the latest action, the event is rolled back to its previous confirmed state and the user is alerted via a visible toast notification (*"Couldn't update the event. Your previous time has been restored."*). If a newer mutation has already occurred, the stale failure is safely ignored.
+5. **Consistency**: This approach prevents race conditions, avoids jarring rollbacks across multi-step mutations, and keeps the client state synchronized with the server without reloading the page or refetching the entire week.
+
+---
+
+## ⚖️ Trade-offs
+
+- **Week View Focus**: I focused on delivering a polished, fully functional Week view rather than implementing Day and Month views, as the Week view represents the core interactive calendar requirements specified in the take-home design.
+- **Out-of-Scope Backend Features**: Guest/attendee management, recurring events, notifications bell, search querying, Google OAuth, Forgot Password, and Security/Notifications settings were kept visual or static where the provided backend API does not support them, avoiding simulated or fake endpoints.
+- **Native Interactions vs. Third-Party Libraries**: I avoided adding heavy external calendar or drag-and-drop libraries (e.g., FullCalendar, react-dnd, or dnd-kit). Implementing event positioning, drag-to-reschedule, resizing, and optimistic updates directly kept the application bundle lightweight (<102 KB gzip), improved performance, and provided total control over 15-minute interval snapping and collision mechanics.
+
+---
+
+## 🔮 What I Would Do With More Time
+
+- **Automated End-to-End Testing**: Add Playwright / Cypress end-to-end test suites covering authentication flows, event CRUD operations, drag/resize interactions, and flaky PATCH failure/rollback scenarios.
+- **Accessibility Enhancements**: Expand keyboard navigation (e.g., arrow-key event manipulation and shortcut keys) and add ARIA live regions for screen readers during optimistic updates and rollbacks.
+- **Polished Feedback States**: Add skeleton loaders, custom empty states for empty days, and offline network status indicators.
+- **Day and Month Calendar Views**: Extend the centralized layout engine to provide fully functional Day and Month views if requested by product requirements.
+- **Mobile Touch Refinements**: Further refine touch gesture interactions and mobile-specific drawer controls on smaller viewport sizes.
+
+---
+
 ## ✨ Features
 
 ### 1. Authentication & Session Management
@@ -44,14 +77,7 @@ Cadence is a modern, lightweight team calendar web application built for the fro
 - **Click vs. Drag Disambiguation**: Accurate threshold detection (<5px triggers details click; $\ge$5px enters drag mode).
 - **Vertical Resize**: Bottom resize handle with `ns-resize` cursor, clamping to a 15-minute minimum duration and preventing invalid calendar bounds.
 
-### 5. Optimistic UI, Rollback & Race-Condition Protection
-- **The Challenge**: The backend's `PATCH /events/:id` endpoint is intentionally unreliable (300–900ms simulated latency and ~8% failure rate).
-- **Optimistic State**: 0ms UI delay — the event card immediately moves to the target slot/duration before the network response arrives.
-- **Per-Event Mutation Versioning**: Each event maintains an incremental version ID (`mutationVersions`). Each in-flight PATCH captures its mutation version.
-- **Race-Condition Protection**: If a user moves an event rapidly (e.g., 10:00 $\rightarrow$ 11:00 $\rightarrow$ 12:00), older PATCH responses or failures cannot overwrite or rollback newer mutations.
-- **Safe Rollback**: If the latest PATCH fails, the event is safely rolled back to its baseline state, accompanied by an informative toast (*"Couldn't update the event. Your previous time has been restored."*), without reloading the page.
-
-### 6. Settings → Account
+### 5. Settings → Account
 - **Profile Details**: Real-time display of authenticated user's actual name, email, avatar, and join date. Supports updating full name, email, and uploading a replacement avatar with instant local preview and $\le 300\text{ KB}$ validation.
 - **Change Password**: Current password verification, new password with strength indicator, confirmation matching, and password visibility toggles.
 - **Sign Out Other Sessions**: Clean iOS-style visual toggle matching Figma.
@@ -162,12 +188,3 @@ cadence-calendar/
 ├── package.json
 └── tsconfig.json
 ```
-
----
-
-## 🧪 Verification & QA Highlights
-
-1. **Clean Code & Linting**: `npm run lint` passes with 0 errors and 0 warnings.
-2. **Type Safety & Build**: `npm run build` completes in $\approx 5\text{s}$ with 0 TypeScript compilation errors.
-3. **No Stale Mutations**: Dragging and resizing rapidly produces consistent state without race-condition corruption.
-4. **Security**: Sensitive tokens are properly handled; `.env` is never committed; no raw backend errors are exposed to users.
