@@ -1,0 +1,183 @@
+.register-card {
+  width: 100%;
+}
+
+.register-header {
+  margin-bottom: 20px;
+}
+
+.register-title {
+  font-size: var(--font-size-heading);
+  font-weight: 700;
+  color: var(--color-ink);
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.register-subtitle {
+  font-size: var(--font-size-body);
+  color: var(--color-ink-secondary);
+}
+
+.register-login-link {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.register-login-link:hover {
+  text-decoration: underline;
+}
+
+/* Avatar Upload */
+.avatar-upload-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.avatar-upload-trigger {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  background-color: #EEF4FF;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+}
+
+.avatar-upload-trigger:hover {
+  transform: scale(1.03);
+}
+
+.avatar-upload-trigger:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-primary-ring);
+}
+
+.avatar-upload-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.avatar-upload-user-icon {
+  color: #8BA8FF;
+}
+
+.avatar-upload-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.avatar-upload-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 22px;
+  height: 22px;
+  background-color: var(--color-primary);
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: var(--shadow-sm);
+}
+
+.avatar-upload-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.avatar-upload-text {
+  font-size: var(--font-size-label);
+  color: var(--color-ink-secondary);
+  line-height: 1.4;
+}
+
+.avatar-upload-error {
+  font-size: 12px;
+  color: var(--color-danger);
+  line-height: 1.3;
+}
+
+/* Form */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Dual Column Password */
+.password-dual-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Password Strength Indicator */
+.password-strength-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: -4px;
+  margin-bottom: 4px;
+}
+
+.strength-bars {
+  display: flex;
+  gap: 4px;
+  width: 80px;
+}
+
+.strength-bar {
+  flex: 1;
+  height: 3.5px;
+  background-color: var(--color-border);
+  border-radius: 2px;
+  transition: background-color 0.2s ease;
+}
+
+.strength-bar--active {
+  background-color: var(--color-primary);
+}
+
+.strength-text {
+  font-size: 12px;
+  color: var(--color-ink-muted);
+}
+
+/* Submit */
+.register-submit-btn {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* Terms */
+.register-terms {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--color-ink-muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+  .password-dual-row {
+    grid-template-columns: 1fr;
+  }
+}

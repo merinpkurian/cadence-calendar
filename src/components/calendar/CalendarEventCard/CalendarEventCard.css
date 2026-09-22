@@ -1,0 +1,110 @@
+.calendar-event-card {
+  position: absolute;
+  box-sizing: border-box;
+  padding: 1px;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  outline: none;
+  touch-action: none;
+}
+
+.calendar-event-card:hover {
+  transform: translateY(-1px);
+  z-index: 20 !important;
+}
+
+.calendar-event-card:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-primary);
+  z-index: 21 !important;
+}
+
+.calendar-event-card--dragging {
+  cursor: grabbing !important;
+  opacity: 0.9;
+  box-shadow: var(--shadow-modal) !important;
+  transition: none !important;
+}
+
+.calendar-event-card__inner {
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  background-color: color-mix(in srgb, var(--event-color) 12%, #ffffff);
+  border: 1px solid color-mix(in srgb, var(--event-color) 80%, #ffffff);
+  border-left: 3px solid var(--event-color);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(17, 24, 39, 0.05);
+}
+
+.calendar-event-card__title {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: color-mix(in srgb, var(--event-color) 85%, #000000);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.calendar-event-card__time {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: color-mix(in srgb, var(--event-color) 70%, #111827);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+
+.calendar-event-card__location {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  color: color-mix(in srgb, var(--event-color) 65%, #4B5563);
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.calendar-event-card__location-icon {
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+/* Resize Handle at Bottom */
+.calendar-event-card__resize-handle {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  cursor: ns-resize;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom-left-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
+}
+
+.calendar-event-card__resize-handle:hover {
+  background-color: var(--event-color);
+  opacity: 0.4;
+}
+
+.calendar-event-card__resize-handle::after {
+  content: '';
+  width: 18px;
+  height: 2px;
+  border-radius: 1px;
+  background-color: var(--event-color);
+  opacity: 0.5;
+}

@@ -1,0 +1,320 @@
+.calendar-sidebar {
+  width: var(--sidebar-width);
+  height: 100vh;
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 18px 16px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.calendar-sidebar__top {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Logo */
+.calendar-sidebar__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.calendar-sidebar__logo-badge {
+  width: 30px;
+  height: 30px;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.calendar-sidebar__logo-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-ink);
+  letter-spacing: -0.02em;
+}
+
+/* Create Button */
+.calendar-sidebar__create-btn {
+  width: 100%;
+  height: 42px;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-body);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 1px 3px rgba(51, 102, 255, 0.3);
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.calendar-sidebar__create-btn:hover {
+  background-color: var(--color-primary-hover);
+  box-shadow: 0 3px 6px rgba(51, 102, 255, 0.35);
+}
+
+/* My Calendars */
+.calendar-sidebar__calendars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.calendar-sidebar__section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-ink-muted);
+  letter-spacing: 0.06em;
+}
+
+.calendar-sidebar__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.calendar-sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  cursor: default;
+}
+
+.calendar-sidebar__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.calendar-sidebar__item-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+/* User Card */
+.calendar-sidebar__user-container {
+  position: relative;
+  width: 100%;
+}
+
+.calendar-sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  border: 1px solid transparent;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.calendar-sidebar__user:hover,
+.calendar-sidebar__user--open {
+  background-color: var(--color-canvas);
+  border-color: var(--color-border-light);
+}
+
+.calendar-sidebar__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #EEF4FF;
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.calendar-sidebar__avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.calendar-sidebar__avatar-initials {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.calendar-sidebar__user-meta {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1;
+}
+
+.calendar-sidebar__user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.calendar-sidebar__user-email {
+  font-size: 11px;
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.calendar-sidebar__user-arrow {
+  color: var(--color-ink-muted);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.calendar-sidebar__user-arrow--rotated {
+  transform: rotate(90deg);
+}
+
+/* Profile Menu Popover */
+.profile-menu-popover {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background-color: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border-light, #e5e7eb);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: 0 10px 25px -5px rgba(17, 24, 39, 0.12), 0 8px 10px -6px rgba(17, 24, 39, 0.04);
+  padding: 8px;
+  z-index: 100;
+  animation: profile-menu-enter 0.15s ease-out;
+  box-sizing: border-box;
+}
+
+@keyframes profile-menu-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.profile-menu-popover__user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+}
+
+.profile-menu-popover__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #eef4ff;
+  border: 1px solid var(--color-border, #d9e0ea);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary, #3366ff);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.profile-menu-popover__avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-menu-popover__meta {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1;
+}
+
+.profile-menu-popover__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink, #111827);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-menu-popover__email {
+  font-size: 11px;
+  color: var(--color-ink-muted, #9ca3af);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-menu-popover__divider {
+  height: 1px;
+  background-color: var(--color-border-light, #e5e7eb);
+  margin: 6px 0;
+}
+
+.profile-menu-popover__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-md, 8px);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-ink-secondary, #4b5563);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.profile-menu-popover__item:hover {
+  background-color: var(--color-canvas, #f5f7fa);
+  color: var(--color-ink, #111827);
+}
+
+.profile-menu-popover__item:focus-visible {
+  outline: none;
+  background-color: var(--color-canvas, #f5f7fa);
+  box-shadow: 0 0 0 2px var(--color-primary-ring);
+}
+
+.profile-menu-popover__item--logout {
+  color: var(--color-danger, #f43f5e);
+}
+
+.profile-menu-popover__item--logout:hover {
+  background-color: var(--color-danger-bg, #fff1f2);
+  color: var(--color-danger-hover, #e11d48);
+}

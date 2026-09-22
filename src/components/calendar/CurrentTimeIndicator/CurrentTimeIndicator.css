@@ -1,0 +1,25 @@
+.current-time-indicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  z-index: 15;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.current-time-indicator__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #F43F5E;
+  margin-left: -4px;
+  flex-shrink: 0;
+}
+
+.current-time-indicator__line {
+  flex: 1;
+  height: 2px;
+  background-color: #F43F5E;
+}
