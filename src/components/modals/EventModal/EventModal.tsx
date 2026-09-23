@@ -51,7 +51,10 @@ export const EventModal: React.FC<EventModalProps> = ({
     if (mode === 'edit' && initialEvent) {
       return formatDateForInput(new Date(initialEvent.startsAt));
     }
-    return formatDateForInput(initialDate || new Date());
+    const todayStr = formatDateForInput(new Date());
+    const initStr = initialDate ? formatDateForInput(initialDate) : todayStr;
+    // Prevent defaulting to a past date in create mode
+    return initStr < todayStr ? todayStr : initStr;
   });
 
   const [startTimeStr, setStartTimeStr] = useState<string>(() => {
@@ -102,6 +105,13 @@ export const EventModal: React.FC<EventModalProps> = ({
 
     if (!title.trim()) {
       setTitleError('Title is required');
+      return;
+    }
+
+    // Guard against scheduling new events on past dates
+    const todayStr = formatDateForInput(new Date());
+    if (mode === 'create' && dateStr < todayStr) {
+      setTimeError('Cannot schedule events on past dates');
       return;
     }
 
@@ -230,7 +240,11 @@ export const EventModal: React.FC<EventModalProps> = ({
                   type="date"
                   className="event-modal-date-picker"
                   value={dateStr}
-                  onChange={(e) => setDateStr(e.target.value)}
+                  min={mode === 'create' ? formatDateForInput(new Date()) : undefined}
+                  onChange={(e) => {
+                    setDateStr(e.target.value);
+                    if (timeError) setTimeError('');
+                  }}
                   onClick={(e) => {
                     try {
                       e.currentTarget.showPicker();

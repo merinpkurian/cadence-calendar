@@ -109,3 +109,11 @@
   outline: none;
   background-color: rgba(51, 102, 255, 0.06);
 }
+
+.day-col__slot--past {
+  cursor: default;
+}
+
+.day-col__slot--past:hover {
+  background-color: transparent;
+}

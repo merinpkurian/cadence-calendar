@@ -17,7 +17,15 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
   currentDate,
   onSelectDate,
 }) => {
+  const [prevCurrentDate, setPrevCurrentDate] = useState<Date>(currentDate);
   const [viewDate, setViewDate] = useState<Date>(new Date(currentDate));
+
+  // Adjust viewDate when currentDate changes without triggering cascading effect renders
+  if (currentDate.getTime() !== prevCurrentDate.getTime()) {
+    setPrevCurrentDate(currentDate);
+    setViewDate(new Date(currentDate));
+  }
+
   const today = new Date();
 
   const year = viewDate.getFullYear();

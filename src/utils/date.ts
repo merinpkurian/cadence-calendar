@@ -110,13 +110,18 @@ export function getCalendarWeek(targetDate: Date = new Date(), selectedDate?: Da
     });
   }
 
+  // Buffer by 24h to ensure the API range safely includes all events for the entire visible week
+  // across all timezones (preventing truncation at UTC-12 to UTC+14 boundaries)
+  const safeFrom = addDays(monday, -1);
+  const safeTo = addDays(sunday, 1);
+
   return {
     days,
     startOfWeek: monday,
     endOfWeek: sunday,
     rangeLabel: formatWeekRange(monday, sunday),
-    fromIso: monday.toISOString(),
-    toIso: sunday.toISOString(),
+    fromIso: safeFrom.toISOString(),
+    toIso: safeTo.toISOString(),
   };
 }
 
@@ -180,8 +185,10 @@ export function getEventPosition(
   const startMinutes = (start.getHours() - CALENDAR_START_HOUR) * 60 + start.getMinutes();
   const durationMinutes = Math.max(15, (end.getTime() - start.getTime()) / 60000);
 
-  const top = (startMinutes / 60) * hourHeight;
-  const height = (durationMinutes / 60) * hourHeight;
+  const rawTop = (startMinutes / 60) * hourHeight;
+  const maxTop = Math.max(0, TOTAL_HOURS * hourHeight - 28);
+  const top = Math.max(0, Math.min(rawTop, maxTop));
+  const height = Math.max(28, (durationMinutes / 60) * hourHeight);
 
   return { top, height };
 }

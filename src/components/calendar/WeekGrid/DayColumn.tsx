@@ -2,7 +2,7 @@ import React from 'react';
 import type { CalendarDay } from '../../../types/calendar';
 import type { CalendarEvent } from '../../../types/event';
 import { layoutEventsForDay } from '../../../utils/calendarLayout';
-import { CALENDAR_START_HOUR, CALENDAR_END_HOUR } from '../../../utils/date';
+import { CALENDAR_START_HOUR, CALENDAR_END_HOUR, startOfDay } from '../../../utils/date';
 import { CalendarEventCard } from '../CalendarEventCard/CalendarEventCard';
 import { CurrentTimeIndicator } from '../CurrentTimeIndicator/CurrentTimeIndicator';
 import './DayColumn.css';
@@ -32,6 +32,7 @@ export const DayColumn: React.FC<DayColumnProps> = ({
   const isWeekend = day.dayName === 'SAT' || day.dayName === 'SUN';
   const isFirstDay = day.dayName === 'MON';
   const isLastDay = day.dayName === 'SUN';
+  const isPastDay = startOfDay(day.date).getTime() < startOfDay(new Date()).getTime();
 
   return (
     <div
@@ -47,7 +48,7 @@ export const DayColumn: React.FC<DayColumnProps> = ({
         {hoursList.map((hour) => (
           <div
             key={hour}
-            className="day-col__slot"
+            className={`day-col__slot ${isPastDay ? 'day-col__slot--past' : ''}`}
             style={{ height: `${hourHeight}px` }}
             onClick={() => onSlotClick?.(day.date, hour)}
             role="button"

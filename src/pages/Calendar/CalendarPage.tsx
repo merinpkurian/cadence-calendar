@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { CalendarSidebar } from '../../components/calendar/CalendarSidebar/CalendarSidebar';
 import { CalendarHeader } from '../../components/calendar/CalendarHeader/CalendarHeader';
 import { WeekGrid } from '../../components/calendar/WeekGrid/WeekGrid';
 import { EventModal } from '../../components/modals/EventModal/EventModal';
 import { EventDetailsPopover } from '../../components/modals/EventDetailsPopover/EventDetailsPopover';
-import { getCalendarWeek, addDays } from '../../utils/date';
+import { getCalendarWeek, addDays, startOfDay, formatDateForInput } from '../../utils/date';
 import { eventService } from '../../services/eventService';
 import { useToast } from '../../hooks/useToast';
 import type { CalendarEvent } from '../../types/event';
@@ -14,7 +15,25 @@ type ActiveModalType = 'none' | 'create' | 'edit' | 'details';
 
 export const CalendarPage: React.FC = () => {
   const { showToast } = useToast();
-  const [currentDate, setCurrentDate] = useState<Date>(() => new Date());
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Initialize currentDate with URL search param or sessionStorage fallback (Test 4: refresh persistence)
+  const [currentDate, setCurrentDate] = useState<Date>(() => {
+    const paramDate = searchParams.get('date');
+    if (paramDate && /^\d{4}-\d{2}-\d{2}$/.test(paramDate)) {
+      const [y, m, d] = paramDate.split('-').map(Number);
+      const parsed = new Date(y, m - 1, d, 12, 0, 0);
+      if (!isNaN(parsed.getTime())) return parsed;
+    }
+    const sessionDate = sessionStorage.getItem('cadence_view_date');
+    if (sessionDate && /^\d{4}-\d{2}-\d{2}$/.test(sessionDate)) {
+      const [y, m, d] = sessionDate.split('-').map(Number);
+      const parsed = new Date(y, m - 1, d, 12, 0, 0);
+      if (!isNaN(parsed.getTime())) return parsed;
+    }
+    return new Date();
+  });
+
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -79,25 +98,36 @@ export const CalendarPage: React.FC = () => {
     };
   }, [calendarWeek.fromIso, calendarWeek.toIso, reloadTrigger]);
 
-  // Navigation handlers
-  const handlePrevWeek = () => {
+  // Navigation handlers with URL and session sync
+  const updateVisibleDate = (newDate: Date) => {
     setIsLoading(true);
-    setCurrentDate((prev) => addDays(prev, -7));
+    setCurrentDate(newDate);
+    const dateKey = formatDateForInput(newDate);
+    sessionStorage.setItem('cadence_view_date', dateKey);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.set('date', dateKey);
+        return next;
+      },
+      { replace: true }
+    );
+  };
+
+  const handlePrevWeek = () => {
+    updateVisibleDate(addDays(currentDate, -7));
   };
 
   const handleNextWeek = () => {
-    setIsLoading(true);
-    setCurrentDate((prev) => addDays(prev, 7));
+    updateVisibleDate(addDays(currentDate, 7));
   };
 
   const handleToday = () => {
-    setIsLoading(true);
-    setCurrentDate(new Date());
+    updateVisibleDate(new Date());
   };
 
   const handleSelectDate = (date: Date) => {
-    setIsLoading(true);
-    setCurrentDate(date);
+    updateVisibleDate(date);
   };
 
   const handleRetry = () => {
@@ -107,13 +137,24 @@ export const CalendarPage: React.FC = () => {
 
   // Event modal openers
   const handleCreateClick = () => {
-    setCreateDate(null);
+    // If viewing a past week/date, default create date to today
+    const today = startOfDay(new Date());
+    const viewDay = startOfDay(currentDate);
+    const defaultDate = viewDay < today ? new Date() : currentDate;
+    setCreateDate(defaultDate);
     setCreateHour(null);
     setSelectedEvent(null);
     setActiveModal('create');
   };
 
   const handleSlotClick = (date: Date, hour: number) => {
+    // Disallow scheduling on past dates
+    const slotDay = startOfDay(date);
+    const today = startOfDay(new Date());
+    if (slotDay < today) {
+      showToast('Cannot schedule events on past dates', 'error');
+      return;
+    }
     setCreateDate(date);
     setCreateHour(hour);
     setSelectedEvent(null);
