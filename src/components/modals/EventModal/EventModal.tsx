@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Calendar as CalendarIcon,
   MapPin,
@@ -41,7 +41,8 @@ export const EventModal: React.FC<EventModalProps> = ({
   onSaved,
   onDeleted,
 }) => {
-  // Initialize state directly from props without synchronous effect cascading re-renders
+  const dateInputRef = useRef<HTMLInputElement>(null);
+
   const [title, setTitle] = useState<string>(() => {
     return mode === 'edit' && initialEvent ? initialEvent.title : '';
   });
@@ -209,16 +210,34 @@ export const EventModal: React.FC<EventModalProps> = ({
 
         {/* Date & Time Row */}
         <div className="event-modal-row">
-          <CalendarIcon size={18} className="event-modal-row__icon" />
+          <CalendarIcon
+            size={18}
+            className="event-modal-row__icon event-modal-row__icon--clickable"
+            onClick={() => {
+              try {
+                dateInputRef.current?.showPicker();
+              } catch {
+                dateInputRef.current?.focus();
+              }
+            }}
+          />
           <div className="event-modal-row__content">
             <div className="event-modal-datetime-pills">
               {/* Date & Start Time Pill */}
               <div className="event-modal-pill">
                 <input
+                  ref={dateInputRef}
                   type="date"
                   className="event-modal-date-picker"
                   value={dateStr}
                   onChange={(e) => setDateStr(e.target.value)}
+                  onClick={(e) => {
+                    try {
+                      e.currentTarget.showPicker();
+                    } catch {
+                      // Fallback for browsers without showPicker
+                    }
+                  }}
                   aria-label="Event date"
                 />
                 <span className="event-modal-pill__separator">·</span>

@@ -80,8 +80,17 @@
 
 .event-modal-row__icon {
   color: var(--color-ink-muted);
-  margin-top: 6px;
+  margin-top: 8px;
   flex-shrink: 0;
+}
+
+.event-modal-row__icon--clickable {
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.event-modal-row__icon--clickable:hover {
+  color: var(--color-ink);
 }
 
 .event-modal-row__content {
@@ -121,6 +130,23 @@
   outline: none;
   cursor: pointer;
   padding: 0;
+  font-family: inherit;
+}
+
+/* Hide native browser calendar icon to eliminate duplicate indicator */
+.event-modal-date-picker::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+  opacity: 0;
+  cursor: pointer;
+  width: 0;
+  height: 0;
+}
+
+.event-modal-date-picker::-webkit-inner-spin-button,
+.event-modal-date-picker::-webkit-clear-button {
+  display: none;
+  -webkit-appearance: none;
 }
 
 .event-modal-pill__separator {
